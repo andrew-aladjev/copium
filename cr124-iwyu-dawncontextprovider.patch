@@ -1,0 +1,42 @@
+From b2389bb3deeca60383364cd553ca3f92b7aced39 Mon Sep 17 00:00:00 2001
+From: Jose Dapena Paz <jdapena@igalia.com>
+Date: Mon, 25 Mar 2024 15:01:50 +0000
+Subject: [PATCH] IWYU: usage of DawnContextProvider in gpu_init.h requires
+ include
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bug: 40939315
+Change-Id: Ic8ff666db572210b2a88b96b5c39b332732df5a0
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/5367630
+Reviewed-by: Vasiliy Telezhnikov <vasilyt@chromium.org>
+Commit-Queue: José Dapena Paz <jdapena@igalia.com>
+Cr-Commit-Position: refs/heads/main@{#1277645}
+---
+ gpu/ipc/service/gpu_init.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/gpu/ipc/service/gpu_init.h b/gpu/ipc/service/gpu_init.h
+index 56aab33665049..066d0e7460dc9 100644
+--- a/gpu/ipc/service/gpu_init.h
++++ b/gpu/ipc/service/gpu_init.h
+@@ -19,6 +19,10 @@
+ #include "skia/buildflags.h"
+ #include "ui/gfx/gpu_extra_info.h"
+ 
++#if BUILDFLAG(SKIA_USE_DAWN)
++#include "gpu/command_buffer/service/dawn_context_provider.h"
++#endif
++
+ namespace base {
+ class CommandLine;
+ }
+@@ -29,7 +33,6 @@ class GLSurface;
+ 
+ namespace gpu {
+ 
+-class DawnContextProvider;
+ class VulkanImplementation;
+ 
+ class GPU_IPC_SERVICE_EXPORT GpuSandboxHelper {

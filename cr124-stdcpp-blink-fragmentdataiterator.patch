@@ -1,0 +1,24 @@
+From 4f5e35c839f8b1e75c1a37f7e1dc3c0f92613ab3 Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Fri, 5 Apr 2024 02:56:11 +0200
+Subject: [PATCH] FragmentDataIterator: use nullptr_t from std:: namespace
+
+in gnu libstdc++, it's not available without a namespace
+---
+ AUTHORS                                                        | 1 +
+ third_party/blink/renderer/core/paint/fragment_data_iterator.h | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/third_party/blink/renderer/core/paint/fragment_data_iterator.h b/third_party/blink/renderer/core/paint/fragment_data_iterator.h
+index 8c42bce8f2..2768e229ae 100644
+--- a/third_party/blink/renderer/core/paint/fragment_data_iterator.h
++++ b/third_party/blink/renderer/core/paint/fragment_data_iterator.h
+@@ -22,7 +22,7 @@ class FragmentDataIteratorBase {
+ 
+  public:
+   explicit FragmentDataIteratorBase(Head& head) : fragment_head_(head) {}
+-  explicit FragmentDataIteratorBase(nullptr_t) {}
++  explicit FragmentDataIteratorBase(std::nullptr_t) {}
+ 
+   Data* GetFragmentData() const {
+     return !IsDone() ? &fragment_head_.at(idx_) : nullptr;

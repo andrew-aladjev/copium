@@ -1,0 +1,21 @@
+From 52de6def82b35d440b970ef998092b44930a7807 Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Fri, 5 Apr 2024 04:58:47 +0200
+Subject: [PATCH] iwyu: memory in gpu_init
+
+---
+ gpu/ipc/service/gpu_init.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gpu/ipc/service/gpu_init.h b/gpu/ipc/service/gpu_init.h
+index 066d0e7460d..d2176bdbb91 100644
+--- a/gpu/ipc/service/gpu_init.h
++++ b/gpu/ipc/service/gpu_init.h
+@@ -5,6 +5,7 @@
+ #ifndef GPU_IPC_SERVICE_GPU_INIT_H_
+ #define GPU_IPC_SERVICE_GPU_INIT_H_
+ 
++#include <memory>
+ #include <optional>
+ 
+ #include "base/memory/raw_ptr.h"

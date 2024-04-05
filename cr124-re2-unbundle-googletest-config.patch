@@ -1,0 +1,22 @@
+From 11f0963c610f5b7f406c11691131c8321f5d3c9f Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Fri, 5 Apr 2024 05:12:37 +0200
+Subject: [PATCH] re2 unbundle: add alias for :re2_config
+
+//third_party/googletest depends on //third_party/re2:re2_config
+---
+ build/linux/unbundle/re2.gn | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/build/linux/unbundle/re2.gn b/build/linux/unbundle/re2.gn
+index d8e4d79b182..aaf081527ae 100644
+--- a/build/linux/unbundle/re2.gn
++++ b/build/linux/unbundle/re2.gn
+@@ -25,3 +25,7 @@ source_set("re2") {
+   deps = [ ":re2_shim" ]
+   libs = [ "re2" ]
+ }
++
++config("re2_config") {
++  configs = [ ":re2_shim_config" ]
++}
