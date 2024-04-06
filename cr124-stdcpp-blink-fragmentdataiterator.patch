@@ -4,6 +4,8 @@ Date: Fri, 5 Apr 2024 02:56:11 +0200
 Subject: [PATCH] FragmentDataIterator: use nullptr_t from std:: namespace
 
 in gnu libstdc++, it's not available without a namespace
+
+Change-Id: I7ad70dc8b2b005d75baf0b3d0578e561ca4864fa
 ---
  AUTHORS                                                        | 1 +
  third_party/blink/renderer/core/paint/fragment_data_iterator.h | 2 +-

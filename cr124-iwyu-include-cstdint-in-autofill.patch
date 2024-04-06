@@ -3,6 +3,7 @@ From: "lauren n. liberda" <lauren@selfisekai.rocks>
 Date: Fri, 5 Apr 2024 04:35:43 +0200
 Subject: [PATCH] iwyu: include cstdint for int64_t in autofill
 
+Change-Id: I821112c1b875880845fb4c35ad4a00186cdc79e7
 ---
  components/autofill/core/browser/webdata/autofill_table_utils.h | 1 +
  1 file changed, 1 insertion(+)

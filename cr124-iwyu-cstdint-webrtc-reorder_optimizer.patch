@@ -3,6 +3,7 @@ From: "lauren n. liberda" <lauren@selfisekai.rocks>
 Date: Fri, 5 Apr 2024 05:40:51 +0200
 Subject: [PATCH] iwyu: cstdint in reorder_optimizer
 
+Change-Id: I8ec0a88311ae22875e2bdcfcdc6843eee2149945
 ---
  modules/audio_coding/neteq/reorder_optimizer.cc | 1 +
  1 file changed, 1 insertion(+)

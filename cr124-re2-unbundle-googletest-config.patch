@@ -4,6 +4,8 @@ Date: Fri, 5 Apr 2024 05:12:37 +0200
 Subject: [PATCH] re2 unbundle: add alias for :re2_config
 
 //third_party/googletest depends on //third_party/re2:re2_config
+
+Change-Id: I794e01a8b7aa2d21eae518c856192d808d818749
 ---
  build/linux/unbundle/re2.gn | 4 ++++
  1 file changed, 4 insertions(+)

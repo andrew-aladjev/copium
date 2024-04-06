@@ -4,6 +4,8 @@ Date: Fri, 5 Apr 2024 05:06:13 +0200
 Subject: [PATCH] openh264 unbundle: do not pass -fsanitize-ignorelist to gcc
 
 the flag is not supported in gcc and causes compilation to fail
+
+Change-Id: I18bdbea75122616c7ac700c6fdce3f2b2b116804
 ---
  build/linux/unbundle/openh264.gn | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

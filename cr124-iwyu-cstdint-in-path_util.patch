@@ -3,6 +3,7 @@ From: "lauren n. liberda" <lauren@selfisekai.rocks>
 Date: Fri, 5 Apr 2024 04:56:10 +0200
 Subject: [PATCH] iwyu: cstdint in path_util
 
+Change-Id: I744bc588dcd46db88a71d56a43b98dd973cc9d0c
 ---
  extensions/browser/path_util.h | 2 ++
  1 file changed, 2 insertions(+)
