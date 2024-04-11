@@ -1,0 +1,101 @@
+From d0574814a0e8910e9b10847ffe7b1f90f0ecf0eb Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Thu, 11 Apr 2024 14:37:53 +0200
+Subject: [PATCH] fix: stop using std::vector<const uint8_t> in
+ ProcessingSingleton
+
+breaks compilation with gcc/libstdc++.
+this is in line with https://issues.chromium.org/issues/323708866
+
+diff --git a/electron/shell/browser/api/electron_api_app.cc b/electron/shell/browser/api/electron_api_app.cc
+index cad66ef5e8..4881834a7b 100644
+--- a/electron/shell/browser/api/electron_api_app.cc
++++ b/electron/shell/browser/api/electron_api_app.cc
+@@ -407,10 +407,10 @@ bool NotificationCallbackWrapper(
+     const base::RepeatingCallback<
+         void(base::CommandLine command_line,
+              const base::FilePath& current_directory,
+-             const std::vector<const uint8_t> additional_data)>& callback,
++             const std::vector<uint8_t> additional_data)>& callback,
+     base::CommandLine cmd,
+     const base::FilePath& cwd,
+-    const std::vector<const uint8_t> additional_data) {
++    const std::vector<uint8_t> additional_data) {
+   // Make sure the callback is called after app gets ready.
+   if (Browser::Get()->is_ready()) {
+     callback.Run(std::move(cmd), cwd, std::move(additional_data));
+@@ -987,7 +987,7 @@ std::string App::GetLocaleCountryCode() {
+ 
+ void App::OnSecondInstance(base::CommandLine cmd,
+                            const base::FilePath& cwd,
+-                           const std::vector<const uint8_t> additional_data) {
++                           const std::vector<uint8_t> additional_data) {
+   v8::Isolate* isolate = JavascriptEnvironment::GetIsolate();
+   v8::HandleScope handle_scope(isolate);
+   v8::Local<v8::Value> data_value =
+diff --git a/electron/shell/browser/api/electron_api_app.h b/electron/shell/browser/api/electron_api_app.h
+index be9b7af97b..96f47b273a 100644
+--- a/electron/shell/browser/api/electron_api_app.h
++++ b/electron/shell/browser/api/electron_api_app.h
+@@ -196,7 +196,7 @@ class App : public ElectronBrowserClient::Delegate,
+   std::string GetSystemLocale(gin_helper::ErrorThrower thrower) const;
+   void OnSecondInstance(base::CommandLine cmd,
+                         const base::FilePath& cwd,
+-                        const std::vector<const uint8_t> additional_data);
++                        const std::vector<uint8_t> additional_data);
+   bool HasSingleInstanceLock() const;
+   bool RequestSingleInstanceLock(gin::Arguments* args);
+   void ReleaseSingleInstanceLock();
+diff --git a/chrome/browser/process_singleton.h b/chrome/browser/process_singleton.h
+index 191d43392d..8dbc5ac458 100644
+--- a/chrome/browser/process_singleton.h
++++ b/chrome/browser/process_singleton.h
+@@ -102,7 +102,7 @@ class ProcessSingleton {
+   using NotificationCallback =
+       base::RepeatingCallback<bool(base::CommandLine command_line,
+                                    const base::FilePath& current_directory,
+-                                   const std::vector<const uint8_t> additional_data)>;
++                                   const std::vector<uint8_t> additional_data)>;
+ 
+ #if BUILDFLAG(IS_WIN)
+   ProcessSingleton(const std::string& program_name,
+diff --git a/chrome/browser/process_singleton_posix.cc b/chrome/browser/process_singleton_posix.cc
+index da7aaed23e..f662580a6f 100644
+--- a/chrome/browser/process_singleton_posix.cc
++++ b/chrome/browser/process_singleton_posix.cc
+@@ -610,7 +610,7 @@ class ProcessSingleton::LinuxWatcher
+   // |reader| is for sending back ACK message.
+   void HandleMessage(const std::string& current_dir,
+                      const std::vector<std::string>& argv,
+-                     const std::vector<const uint8_t> additional_data,
++                     const std::vector<uint8_t> additional_data,
+                      SocketReader* reader);
+ 
+   // Called when the ProcessSingleton that owns this class is about to be
+@@ -672,7 +672,7 @@ void ProcessSingleton::LinuxWatcher::StartListening(int socket) {
+ void ProcessSingleton::LinuxWatcher::HandleMessage(
+     const std::string& current_dir,
+     const std::vector<std::string>& argv,
+-    const std::vector<const uint8_t> additional_data,
++    const std::vector<uint8_t> additional_data,
+     SocketReader* reader) {
+   DCHECK(ui_task_runner_->BelongsToCurrentThread());
+   DCHECK(reader);
+@@ -763,7 +763,7 @@ void ProcessSingleton::LinuxWatcher::SocketReader::
+   base::StringToSizeT(tokens[0], &num_args);
+   std::vector<std::string> command_line(tokens.begin() + 1, tokens.begin() + 1 + num_args);
+ 
+-  std::vector<const uint8_t> additional_data;
++  std::vector<uint8_t> additional_data;
+   if (tokens.size() >= 3 + num_args) {
+     size_t additional_data_size;
+     base::StringToSizeT(tokens[1 + num_args], &additional_data_size);
+@@ -772,7 +772,7 @@ void ProcessSingleton::LinuxWatcher::SocketReader::
+         std::string(1, kTokenDelimiter));
+     const uint8_t* additional_data_bits =
+         reinterpret_cast<const uint8_t*>(remaining_args.c_str());
+-    additional_data = std::vector<const uint8_t>(
++    additional_data = std::vector<uint8_t>(
+         additional_data_bits, additional_data_bits + additional_data_size);
+   }
+
