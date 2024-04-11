@@ -1,0 +1,26 @@
+From 22c149812c6ffb67b88e3035c9d242de7c94cea9 Mon Sep 17 00:00:00 2001
+From: Bruno Pitrus <brunopitrus@hotmail.com>
+Date: Mon, 8 Apr 2024 18:17:00 +0200
+Subject: [PATCH] build: add missing header for
+ `content::SyntheticGestureTarget` (#41789)
+
+IWYU: add missing header for `content::SyntheticGestureTarget`
+
+GNU libstdc++ does not allow using std::unique_ptr on incomplete types,
+leading to a compile error.
+---
+ shell/browser/osr/osr_render_widget_host_view.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/electron/shell/browser/osr/osr_render_widget_host_view.cc b/electron/shell/browser/osr/osr_render_widget_host_view.cc
+index a928d6ccf9e7a..efeecef961273 100644
+--- a/electron/shell/browser/osr/osr_render_widget_host_view.cc
++++ b/electron/shell/browser/osr/osr_render_widget_host_view.cc
+@@ -25,6 +25,7 @@
+ #include "content/browser/renderer_host/render_widget_host_delegate.h"  // nogncheck
+ #include "content/browser/renderer_host/render_widget_host_owner_delegate.h"  // nogncheck
+ #include "content/common/input/synthetic_gesture.h"  // nogncheck
++#include "content/common/input/synthetic_gesture_target.h"
+ #include "content/public/browser/browser_task_traits.h"
+ #include "content/public/browser/browser_thread.h"
+ #include "content/public/browser/context_factory.h"
