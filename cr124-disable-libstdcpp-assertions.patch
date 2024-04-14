@@ -1,0 +1,75 @@
+From d1579bf7a849c3b2d99e268a4a84ff0ae8068fa5 Mon Sep 17 00:00:00 2001
+From: Jose Dapena Paz <jdapena@igalia.com>
+Date: Tue, 19 Mar 2024 10:23:29 +0000
+Subject: [PATCH] libstdc++: make hardening assertions configurable from GN
+ args
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The current implementation for enabling libstdc++ hardening
+assertions is done using build_overrides.gni. This is problematic
+as it breaks other dependencies using //build/ as they will require
+also an specific argument for that purpose.
+
+Replace it with a GN arg, use_safe_libcxx, that uses same heuristic
+(Linux without custom libc++), but can be set from command line. This
+is because we cannot accurately know if libstdc++ is used, so we want
+to still allow to enable the assertions.
+
+Bug: 328287875
+Change-Id: I27cf09a13af638cfc5e82bce5e3fa7391512c59c
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/5348001
+Reviewed-by: Philipp Wollermann <philwo@chromium.org>
+Reviewed-by: Michael Achenbach <machenbach@chromium.org>
+Commit-Queue: José Dapena Paz <jdapena@igalia.com>
+Cr-Commit-Position: refs/heads/main@{#1274804}
+---
+ build/config/c++/c++.gni  | 9 +++++----
+ build_overrides/build.gni | 6 ------
+ 2 files changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/build/config/c++/c++.gni b/build/config/c++/c++.gni
+index bd8e7118e30..e7bf4cd86f4 100644
+--- a/build/config/c++/c++.gni
++++ b/build/config/c++/c++.gni
+@@ -52,6 +52,11 @@ declare_args() {
+   # true, you must also set libcxx_abi_unstable=false, which is bad for
+   # performance and memory use.
+   libcxx_is_shared = use_custom_libcxx && is_component_build
++
++  # In case the C++ standard library implementation used is libstdc++, then
++  # enable its own hardening checks. As we cannot determine in GN if libstdc++
++  # is used or not, by default enable it for Linux without the custom libc++.
++  use_safe_libstdcxx = is_linux && !use_custom_libcxx
+ }
+ 
+ # The saigo libc++ is distinct from the custom hermetic libc++. However, since
+@@ -59,10 +64,6 @@ declare_args() {
+ # enable libc++ hardening there as well.
+ use_safe_libcxx = (use_custom_libcxx && enable_safe_libcxx) || is_nacl_saigo
+ 
+-# libstdc++ has its own hardening assertions that we want to enable by default
+-# in Chromium builds.
+-use_safe_libstdcxx = is_linux && !use_custom_libcxx && enable_safe_libstdcxx
+-
+ # libc++abi needs to be exported from executables to be picked up by shared
+ # libraries on certain instrumented builds.
+ export_libcxxabi_from_executables =
+diff --git a/build_overrides/build.gni b/build_overrides/build.gni
+index e64245b7d49..1ff231c8436 100644
+--- a/build_overrides/build.gni
++++ b/build_overrides/build.gni
+@@ -29,12 +29,6 @@ build_with_v8_embedder = build_with_chromium
+ # `use_custom_libcxx = true`.
+ enable_safe_libcxx = true
+ 
+-# Enable assertions on safety checks, also in libstdc++
+-#
+-# In case the C++ standard library implementation used is libstdc++, then
+-# enable its own hardening checks.
+-enable_safe_libstdcxx = true
+-
+ # Features used by //base/trace_event and //services/tracing.
+ declare_args() {
+   # Tracing support requires //third_party/perfetto, which is not available in
