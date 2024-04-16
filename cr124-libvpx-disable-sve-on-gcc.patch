@@ -1,0 +1,34 @@
+From f92300b4d3f3fcb04eee24880893cdc7b896e512 Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Tue, 16 Apr 2024 21:31:30 +0200
+Subject: [PATCH] libvpx: also disable SVE on gcc
+
+arm_neon_sve_bridge.h is not available on gcc
+
+Bug: 40565911
+---
+ third_party/libvpx/BUILD.gn | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/third_party/libvpx/BUILD.gn b/third_party/libvpx/BUILD.gn
+index f2cff6bfa4c..0522aceac9c 100644
+--- a/third_party/libvpx/BUILD.gn
++++ b/third_party/libvpx/BUILD.gn
+@@ -333,7 +333,7 @@ if (current_cpu == "arm64") {
+   # SVE is disabled for Windows due to a limitation with clang-cl-18:
+   # third_party\llvm-build\Release+Asserts\lib\clang\18\include\arm_sve.h(271,1):
+   # error: cannot mangle this built-in __SVInt8_t type yet
+-  if (!is_win) {
++  if (!is_win && is_clang) {
+     source_set("libvpx_intrinsics_sve") {
+       check_includes = false
+       configs -= [ "//build/config/compiler:chromium_code" ]
+@@ -547,7 +547,7 @@ static_library("libvpx") {
+   if (current_cpu == "arm64") {
+     deps += [ ":libvpx_intrinsics_neon_dotprod" ]
+     deps += [ ":libvpx_intrinsics_neon_i8mm" ]
+-    if (!is_win) {
++    if (!is_win && is_clang) {
+       deps += [
+         ":libvpx_intrinsics_sve",
+         ":libvpx_intrinsics_sve2",
