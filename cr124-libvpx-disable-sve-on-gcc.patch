@@ -1,4 +1,4 @@
-From f92300b4d3f3fcb04eee24880893cdc7b896e512 Mon Sep 17 00:00:00 2001
+From 26dca67b82fdb5cad896edfaeddc7aef612dc9b0 Mon Sep 17 00:00:00 2001
 From: "lauren n. liberda" <lauren@selfisekai.rocks>
 Date: Tue, 16 Apr 2024 21:31:30 +0200
 Subject: [PATCH] libvpx: also disable SVE on gcc
@@ -7,8 +7,9 @@ arm_neon_sve_bridge.h is not available on gcc
 
 Bug: 40565911
 ---
- third_party/libvpx/BUILD.gn | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ third_party/libvpx/BUILD.gn                               | 4 ++--
+ third_party/libvpx/source/config/linux/arm64/vpx_config.h | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/third_party/libvpx/BUILD.gn b/third_party/libvpx/BUILD.gn
 index f2cff6bfa4c..0522aceac9c 100644
@@ -32,3 +33,18 @@ index f2cff6bfa4c..0522aceac9c 100644
        deps += [
          ":libvpx_intrinsics_sve",
          ":libvpx_intrinsics_sve2",
+diff --git a/third_party/libvpx/source/config/linux/arm64/vpx_config.h b/third_party/libvpx/source/config/linux/arm64/vpx_config.h
+index 39bc1e6f092..f2c6734a035 100644
+--- a/third_party/libvpx/source/config/linux/arm64/vpx_config.h
++++ b/third_party/libvpx/source/config/linux/arm64/vpx_config.h
+@@ -28,8 +28,8 @@
+ #define HAVE_NEON 1
+ #define HAVE_NEON_DOTPROD 1
+ #define HAVE_NEON_I8MM 1
+-#define HAVE_SVE 1
+-#define HAVE_SVE2 1
++#define HAVE_SVE 0
++#define HAVE_SVE2 0
+ #define HAVE_MIPS32 0
+ #define HAVE_DSPR2 0
+ #define HAVE_MSA 0
