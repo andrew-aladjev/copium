@@ -1,0 +1,56 @@
+From d15720567a6feee93739efd3ddb122177f71e273 Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Thu, 25 Apr 2024 03:57:36 +0200
+Subject: [PATCH] unbundle: add zstd replacement
+
+---
+ build/linux/unbundle/replace_gn_files.py |  1 +
+ build/linux/unbundle/zstd.gn             | 27 ++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
+ create mode 100644 build/linux/unbundle/zstd.gn
+
+diff --git a/build/linux/unbundle/replace_gn_files.py b/build/linux/unbundle/replace_gn_files.py
+index 215a57876dd..c774481c36f 100755
+--- a/build/linux/unbundle/replace_gn_files.py
++++ b/build/linux/unbundle/replace_gn_files.py
+@@ -80,6 +80,7 @@ REPLACEMENTS = {
+   'vulkan_memory_allocator' : 'third_party/vulkan_memory_allocator/BUILD.gn',
+   'woff2': 'third_party/woff2/BUILD.gn',
+   'zlib': 'third_party/zlib/BUILD.gn',
++  'zstd': 'third_party/zstd/BUILD.gn',
+ }
+ 
+ 
+diff --git a/build/linux/unbundle/zstd.gn b/build/linux/unbundle/zstd.gn
+new file mode 100644
+index 00000000000..1a5dac6d43a
+--- /dev/null
++++ b/build/linux/unbundle/zstd.gn
+@@ -0,0 +1,27 @@
++# Copyright 2024 The Chromium Authors
++# Use of this source code is governed by a BSD-style license that can be
++# found in the LICENSE file.
++
++import("//build/config/linux/pkg_config.gni")
++import("//build/shim_headers.gni")
++
++pkg_config("system_zstd") {
++  packages = [ "libzstd" ]
++}
++
++shim_headers("zstd_headers") {
++  root_path = "src/lib"
++  headers = [
++    "zstd.h",
++    "zstd_errors.h",
++  ]
++}
++
++source_set("compress") {
++  public_configs = [ ":system_zstd" ]
++  public_deps = [ ":zstd_headers" ]
++}
++source_set("decompress") {
++  public_configs = [ ":system_zstd" ]
++  public_deps = [ ":zstd_headers" ]
++}

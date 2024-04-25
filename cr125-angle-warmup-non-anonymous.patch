@@ -1,0 +1,124 @@
+From 47fc356b23c0528e118fc29ad04e567a3a7f64e1 Mon Sep 17 00:00:00 2001
+From: Jose Dapena Paz <jdapena@igalia.com>
+Date: Tue, 9 Apr 2024 11:20:07 +0200
+Subject: [PATCH] GCC: move warm up tasks out of anonymous namespace
+
+GCC anonymous namespace is set per file. So forward declaring in the
+anonymous namespace of .h will not be valid in the .cpp file.
+
+Bug: chromium:40565911
+Change-Id: I10bd94f035761602d69e59a94dfde5dc774a6776
+Reviewed-on: https://chromium-review.googlesource.com/c/angle/angle/+/5475346
+Reviewed-by: Shahbaz Youssefi <syoussefi@chromium.org>
+Reviewed-by: Charlie Lao <cclao@google.com>
+Commit-Queue: Shahbaz Youssefi <syoussefi@chromium.org>
+---
+ .../renderer/vulkan/ProgramExecutableVk.cpp      | 16 ++++++++--------
+ .../renderer/vulkan/ProgramExecutableVk.h        | 10 +++-------
+ 2 files changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/third_party/angle/src/libANGLE/renderer/vulkan/ProgramExecutableVk.cpp b/third_party/angle/src/libANGLE/renderer/vulkan/ProgramExecutableVk.cpp
+index db3568f46..9c901d84b 100644
+--- a/third_party/angle/src/libANGLE/renderer/vulkan/ProgramExecutableVk.cpp
++++ b/third_party/angle/src/libANGLE/renderer/vulkan/ProgramExecutableVk.cpp
+@@ -303,8 +303,9 @@ void ReadFromDefaultUniformBlock(int componentCount,
+         memcpy(dst, readPtr, elementSize);
+     }
+ }
++}  // namespace
+ 
+-class WarmUpTaskCommon : public vk::Context, public LinkSubTask
++class ProgramExecutableVk::WarmUpTaskCommon : public vk::Context, public LinkSubTask
+ {
+   public:
+     WarmUpTaskCommon(vk::Renderer *renderer) : vk::Context(renderer) {}
+@@ -377,7 +378,7 @@ class WarmUpTaskCommon : public vk::Context, public LinkSubTask
+     unsigned int mErrorLine    = 0;
+ };
+ 
+-class WarmUpComputeTask : public WarmUpTaskCommon
++class ProgramExecutableVk::WarmUpComputeTask : public WarmUpTaskCommon
+ {
+   public:
+     WarmUpComputeTask(vk::Renderer *renderer,
+@@ -399,7 +400,7 @@ class WarmUpComputeTask : public WarmUpTaskCommon
+ };
+ 
+ using SharedRenderPass = vk::AtomicRefCounted<vk::RenderPass>;
+-class WarmUpGraphicsTask : public WarmUpTaskCommon
++class ProgramExecutableVk::WarmUpGraphicsTask : public WarmUpTaskCommon
+ {
+   public:
+     WarmUpGraphicsTask(vk::Renderer *renderer,
+@@ -452,7 +453,6 @@ class WarmUpGraphicsTask : public WarmUpTaskCommon
+     // Temporary objects to clean up at the end
+     SharedRenderPass *mCompatibleRenderPass;
+ };
+-}  // namespace
+ 
+ DefaultUniformBlockVk::DefaultUniformBlockVk() = default;
+ 
+@@ -828,7 +828,7 @@ angle::Result ProgramExecutableVk::getPipelineCacheWarmUpTasks(
+     vk::GraphicsPipelineDesc *graphicsPipelineDesc        = nullptr;
+     vk::RenderPass compatibleRenderPass;
+ 
+-    rx::WarmUpTaskCommon prepForWarmUpContext(renderer);
++    WarmUpTaskCommon prepForWarmUpContext(renderer);
+     ANGLE_TRY(prepareForWarmUpPipelineCache(
+         &prepForWarmUpContext, pipelineRobustness, pipelineProtectedAccess, subset, &isCompute,
+         &surfaceRotationVariations, &graphicsPipelineDesc, &compatibleRenderPass));
+@@ -838,7 +838,7 @@ angle::Result ProgramExecutableVk::getPipelineCacheWarmUpTasks(
+     {
+         ASSERT(!compatibleRenderPass.valid());
+ 
+-        warmUpSubTasks.push_back(std::make_shared<rx::WarmUpComputeTask>(
++        warmUpSubTasks.push_back(std::make_shared<WarmUpComputeTask>(
+             renderer, this, pipelineRobustness, pipelineProtectedAccess));
+     }
+     else
+@@ -863,7 +863,7 @@ angle::Result ProgramExecutableVk::getPipelineCacheWarmUpTasks(
+                 pipelines.populate(mWarmUpGraphicsPipelineDesc, vk::Pipeline(), &pipelineHelper);
+             }
+ 
+-            warmUpSubTasks.push_back(std::make_shared<rx::WarmUpGraphicsTask>(
++            warmUpSubTasks.push_back(std::make_shared<WarmUpGraphicsTask>(
+                 renderer, this, pipelineRobustness, pipelineProtectedAccess, subset,
+                 surfaceRotation, *graphicsPipelineDesc, sharedRenderPass, pipelineHelper));
+         }
+@@ -1040,7 +1040,7 @@ void ProgramExecutableVk::waitForPostLinkTasksImpl(ContextVk *contextVk)
+     // Get results and clean up
+     for (const std::shared_ptr<rx::LinkSubTask> &task : postLinkSubTasks)
+     {
+-        rx::WarmUpTaskCommon *warmUpTask = static_cast<rx::WarmUpTaskCommon *>(task.get());
++        WarmUpTaskCommon *warmUpTask = static_cast<WarmUpTaskCommon *>(task.get());
+ 
+         // As these tasks can be run post-link, their results are ignored.  Failure is harmless, but
+         // more importantly the error (effectively due to a link event) may not be allowed through
+diff --git a/third_party/angle/src/libANGLE/renderer/vulkan/ProgramExecutableVk.h b/third_party/angle/src/libANGLE/renderer/vulkan/ProgramExecutableVk.h
+index 01ada9855..0e6600ac1 100644
+--- a/third_party/angle/src/libANGLE/renderer/vulkan/ProgramExecutableVk.h
++++ b/third_party/angle/src/libANGLE/renderer/vulkan/ProgramExecutableVk.h
+@@ -106,13 +106,6 @@ struct DefaultUniformBlockVk final : private angle::NonCopyable
+     std::vector<sh::BlockMemberInfo> uniformLayout;
+ };
+ 
+-namespace
+-{
+-class WarmUpTaskCommon;
+-class WarmUpComputeTask;
+-class WarmUpGraphicsTask;
+-}  // namespace
+-
+ // Performance and resource counters.
+ using DescriptorSetCountList   = angle::PackedEnumMap<DescriptorSetIndex, uint32_t>;
+ using ImmutableSamplerIndexMap = angle::HashMap<vk::YcbcrConversionDesc, uint32_t>;
+@@ -378,6 +371,9 @@ class ProgramExecutableVk : public ProgramExecutableImpl
+     }
+ 
+   private:
++    class WarmUpTaskCommon;
++    class WarmUpComputeTask;
++    class WarmUpGraphicsTask;
+     friend class ProgramVk;
+     friend class ProgramPipelineVk;
+     friend class WarmUpComputeTask;

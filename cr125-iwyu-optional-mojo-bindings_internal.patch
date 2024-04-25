@@ -1,0 +1,28 @@
+From 39735a1167272326da5ff85e0096b52ca7f47d6c Mon Sep 17 00:00:00 2001
+From: Jose Dapena Paz <jdapena@igalia.com>
+Date: Tue, 16 Apr 2024 14:36:36 +0000
+Subject: [PATCH] IWYU: missing include for std::optional usage in
+ bindings_internal.h
+
+Bug: 41455655
+Change-Id: Id3e3ade6c8cc89a526462ea9ff6c8bc1dc93a375
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/5456954
+Reviewed-by: Ken Rockot <rockot@google.com>
+Commit-Queue: Ken Rockot <rockot@google.com>
+Cr-Commit-Position: refs/heads/main@{#1288018}
+---
+ mojo/public/cpp/bindings/lib/bindings_internal.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mojo/public/cpp/bindings/lib/bindings_internal.h b/mojo/public/cpp/bindings/lib/bindings_internal.h
+index 759ceaf7e64..9f4202b6481 100644
+--- a/mojo/public/cpp/bindings/lib/bindings_internal.h
++++ b/mojo/public/cpp/bindings/lib/bindings_internal.h
+@@ -8,6 +8,7 @@
+ #include <stdint.h>
+ 
+ #include <functional>
++#include <optional>
+ #include <type_traits>
+ #include <utility>
+ 
