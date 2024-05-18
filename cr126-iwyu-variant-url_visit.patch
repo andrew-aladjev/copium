@@ -1,0 +1,30 @@
+From 43e186fe732cc810f14b673393aca88af7093dc1 Mon Sep 17 00:00:00 2001
+From: Jose Dapena Paz <jdapena@igalia.com>
+Date: Wed, 15 May 2024 09:07:02 +0000
+Subject: [PATCH] IWYU: missing include for std::variant usage in url_visit.h
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bug: 41455655
+Change-Id: I1c5d2ef5d230d60a62e9c3aee8709b73b5b85fae
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/5514839
+Reviewed-by: Tibor Goldschwendt <tiborg@chromium.org>
+Commit-Queue: José Dapena Paz <jdapena@igalia.com>
+Cr-Commit-Position: refs/heads/main@{#1301171}
+---
+ components/visited_url_ranking/public/url_visit.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/components/visited_url_ranking/public/url_visit.h b/components/visited_url_ranking/public/url_visit.h
+index 8fa58c569f2..8581be3068d 100644
+--- a/components/visited_url_ranking/public/url_visit.h
++++ b/components/visited_url_ranking/public/url_visit.h
+@@ -8,6 +8,7 @@
+ #include <memory>
+ #include <optional>
+ #include <set>
++#include <variant>
+ #include <vector>
+ 
+ #include "base/functional/callback.h"

@@ -1,0 +1,48 @@
+From e54f6c05b3fbb8e94a426834f52abacb18007e7f Mon Sep 17 00:00:00 2001
+From: Jose Dapena Paz <jdapena@igalia.com>
+Date: Wed, 15 May 2024 21:21:46 +0000
+Subject: [PATCH] GCC: returning an std::optional of a value requires move
+ operator
+
+In rekor.cc, returning an std::optional of the locally created
+LogEntry requires the move operator.
+
+Bug: 40565911
+Change-Id: Ib40ff1ce60ccc8401e98ff233df1702c6cab2524
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/5514838
+Reviewed-by: Adam Langley <agl@chromium.org>
+Commit-Queue: Adam Langley <agl@chromium.org>
+Cr-Commit-Position: refs/heads/main@{#1301579}
+---
+ device/fido/enclave/verify/rekor.cc | 3 ++-
+ device/fido/enclave/verify/rekor.h  | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/device/fido/enclave/verify/rekor.cc b/device/fido/enclave/verify/rekor.cc
+index 5b9a939385d..2b3289d4f8a 100644
+--- a/device/fido/enclave/verify/rekor.cc
++++ b/device/fido/enclave/verify/rekor.cc
+@@ -72,7 +72,8 @@ LogEntry::LogEntry(std::string body,
+       verification(std::move(verification)) {}
+ LogEntry::LogEntry() = default;
+ LogEntry::~LogEntry() = default;
+-LogEntry::LogEntry(LogEntry& log_entry) = default;
++LogEntry::LogEntry(const LogEntry& log_entry) = default;
++LogEntry::LogEntry(LogEntry&& log_entry) = default;
+ 
+ void LogEntry::RegisterJSONConverter(
+     base::JSONValueConverter<LogEntry>* converter) {
+diff --git a/device/fido/enclave/verify/rekor.h b/device/fido/enclave/verify/rekor.h
+index d8b63639bfd..d3c1edcee83 100644
+--- a/device/fido/enclave/verify/rekor.h
++++ b/device/fido/enclave/verify/rekor.h
+@@ -40,7 +40,8 @@ struct COMPONENT_EXPORT(DEVICE_FIDO) LogEntry {
+            std::string log_id,
+            uint64_t log_index,
+            std::optional<LogEntryVerification> verification);
+-  LogEntry(LogEntry& log_entry);
++  LogEntry(const LogEntry& log_entry);
++  LogEntry(LogEntry&& log_entry);
+   LogEntry();
+   ~LogEntry();
+ 

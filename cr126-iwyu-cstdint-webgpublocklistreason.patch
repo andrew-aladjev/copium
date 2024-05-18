@@ -1,0 +1,21 @@
+From 2ea2c4255ca2cd9683866c3ddb528b2bdea6fdef Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Sat, 18 May 2024 02:20:16 +0200
+Subject: [PATCH] iwyu: cstdint in WebGPUBlocklistReason
+
+---
+ gpu/config/webgpu_blocklist_impl.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gpu/config/webgpu_blocklist_impl.h b/gpu/config/webgpu_blocklist_impl.h
+index 2f122abae64..8ab3483aded 100644
+--- a/gpu/config/webgpu_blocklist_impl.h
++++ b/gpu/config/webgpu_blocklist_impl.h
+@@ -5,6 +5,7 @@
+ #ifndef GPU_CONFIG_WEBGPU_BLOCKLIST_IMPL_H_
+ #define GPU_CONFIG_WEBGPU_BLOCKLIST_IMPL_H_
+ 
++#include <cstdint>
+ #include <string>
+ 
+ namespace wgpu {

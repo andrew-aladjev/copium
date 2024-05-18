@@ -1,0 +1,42 @@
+From f97d657e2b43fb3154b1f3c4d1e64a963e528219 Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Sat, 18 May 2024 19:13:30 +0200
+Subject: [PATCH] replace std::format with base::StringPrintf in
+ read_anything_app_model.cc
+
+the <format> header is blocked in presubmit checks,
+but passed through matched together with a iwyu violation.
+---
+ chrome/renderer/accessibility/read_anything_app_model.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/chrome/renderer/accessibility/read_anything_app_model.cc b/chrome/renderer/accessibility/read_anything_app_model.cc
+index 25aa4c88ba2..de2c6af22cd 100644
+--- a/chrome/renderer/accessibility/read_anything_app_model.cc
++++ b/chrome/renderer/accessibility/read_anything_app_model.cc
+@@ -11,6 +11,7 @@
+ #include "base/check.h"
+ #include "base/containers/contains.h"
+ #include "base/metrics/histogram_functions.h"
++#include "base/strings/stringprintf.h"
+ #include "content/public/renderer/render_thread.h"
+ #include "services/strings/grit/services_strings.h"
+ #include "ui/accessibility/accessibility_features.h"
+@@ -1059,7 +1060,7 @@ std::string ReadAnythingAppModel::GetHtmlTag(
+     int32_t hierarchical_level =
+         ax_node->GetIntAttribute(ax::mojom::IntAttribute::kHierarchicalLevel);
+     if (hierarchical_level) {
+-      return std::format("h{}", hierarchical_level);
++      return base::StringPrintf("h%d", hierarchical_level);
+     }
+   }
+ 
+@@ -1159,7 +1160,7 @@ std::string ReadAnythingAppModel::GetHeadingHtmlTagForPDF(
+   int32_t hierarchical_level =
+       ax_node->GetIntAttribute(ax::mojom::IntAttribute::kHierarchicalLevel);
+   if (hierarchical_level) {
+-    return std::format("h{}", hierarchical_level);
++    return base::StringPrintf("h%d", hierarchical_level);
+   }
+   return html_tag;
+ }
