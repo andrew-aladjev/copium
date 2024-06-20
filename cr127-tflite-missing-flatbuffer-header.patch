@@ -1,0 +1,28 @@
+From 0db18955887e14a410962fb81022145097242fb8 Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Thu, 20 Jun 2024 01:33:08 +0200
+Subject: [PATCH] tflite: add missing header generation
+
+---
+ third_party/tflite/BUILD.gn | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/third_party/tflite/BUILD.gn b/third_party/tflite/BUILD.gn
+index fcca2752c7c8a..22de04e1a9423 100644
+--- a/third_party/tflite/BUILD.gn
++++ b/third_party/tflite/BUILD.gn
+@@ -256,9 +256,13 @@ flatbuffer("tflite_flatbuffer_regular_headers") {
+     "src/tensorflow/lite/delegates/gpu/cl/serialization.fbs",
+     "src/tensorflow/lite/delegates/gpu/common/gpu_model.fbs",
+     "src/tensorflow/lite/delegates/gpu/common/task/serialization_base.fbs",
++    "src/tensorflow/lite/delegates/xnnpack/weight_cache_schema.fbs",
+     "src/tensorflow/lite/schema/conversion_metadata.fbs",
+   ]
+-  args = [ "--gen-object-api" ]
++  args = [
++    "--gen-object-api",
++    "--gen-mutable",
++  ]
+   flatc_include_dirs = [ "src" ]
+   extra_include_dirs = [ "src" ]
+ }
