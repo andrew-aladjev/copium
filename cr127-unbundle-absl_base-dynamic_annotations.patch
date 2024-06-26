@@ -1,0 +1,21 @@
+From da30dc697c97ac6ba32820f3a6430531dad39a1c Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Wed, 26 Jun 2024 17:00:16 +0200
+Subject: [PATCH] unbundle: add missing absl_base header
+
+---
+ build/linux/unbundle/absl_base.gn | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/build/linux/unbundle/absl_base.gn b/build/linux/unbundle/absl_base.gn
+index 7da86e46147bd..b5ce0863e6fde 100644
+--- a/build/linux/unbundle/absl_base.gn
++++ b/build/linux/unbundle/absl_base.gn
+@@ -27,6 +27,7 @@ shim_headers("base_shim") {
+   headers = [
+     "call_once.h",
+     "casts.h",
++    "dynamic_annotations.h",
+   ]
+ }
+ 
