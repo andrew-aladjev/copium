@@ -1,0 +1,40 @@
+From 531d286377aae797b166ec4ab20b7463c40bf731 Mon Sep 17 00:00:00 2001
+From: "lauren n. liberda" <lauren@selfisekai.rocks>
+Date: Thu, 27 Jun 2024 20:28:29 +0200
+Subject: [PATCH] stdc++: workaround bug in std::optional with clang in
+ shared_image_backing.cc
+
+std::optional<T>::emplace does not work in this combination,
+see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101227
+
+Bug: 41455655
+---
+ gpu/command_buffer/service/shared_image/shared_image_backing.cc | 2 +-
+ gpu/command_buffer/service/shared_image/shared_image_backing.h  | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/gpu/command_buffer/service/shared_image/shared_image_backing.cc b/gpu/command_buffer/service/shared_image/shared_image_backing.cc
+index c33550f7b8818..e7bec84e44a18 100644
+--- a/gpu/command_buffer/service/shared_image/shared_image_backing.cc
++++ b/gpu/command_buffer/service/shared_image/shared_image_backing.cc
+@@ -401,7 +401,7 @@ void SharedImageBacking::OnReadSucceeded() {
+ 
+ void SharedImageBacking::OnWriteSucceeded() {
+   AutoLock auto_lock(this);
+-  scoped_write_uma_.emplace();
++  *scoped_write_uma_ = ScopedWriteUMA();
+ }
+ 
+ size_t SharedImageBacking::GetEstimatedSize() const {
+diff --git a/gpu/command_buffer/service/shared_image/shared_image_backing.h b/gpu/command_buffer/service/shared_image/shared_image_backing.h
+index 7ea4a01b196ee..cdeb30c6ac642 100644
+--- a/gpu/command_buffer/service/shared_image/shared_image_backing.h
++++ b/gpu/command_buffer/service/shared_image/shared_image_backing.h
+@@ -391,7 +391,6 @@ class GPU_GLES2_EXPORT SharedImageBacking {
+     ScopedWriteUMA() = default;
+ 
+     ScopedWriteUMA(const ScopedWriteUMA&) = delete;
+-    ScopedWriteUMA& operator=(const ScopedWriteUMA&) = delete;
+ 
+     ~ScopedWriteUMA() {
+       UMA_HISTOGRAM_BOOLEAN("GPU.SharedImage.ContentConsumed",
