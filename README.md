@@ -3,12 +3,13 @@
 patches to chromium allowing to build with gcc, libstdc++,
 and some other common distro fixes (like unbundle scripts).
 
-as of M124, chromium still cannot be built with both clang
-and libstdc++. choose your poison. if it's the former,
-you're in the right place.
+new in M127: you can build with clang **and** libstdc++!
 
 some patches are cherry-picks from chromium main branch,
-some sourced from gentoo.
+some are made by me, lnl (most get upstreamed in the end).
+i'm sharing them under the same BSD-3-Clause license as chromium,
+with no additional restrictions.
+there also used to be some patches from gentoo here, not anymore.
 
 patches are prefixed by software and its version branch,
 e.g. `cr124-` means chromium M124, and `e30-` means electron 30-x-y.
