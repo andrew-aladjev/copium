@@ -1,0 +1,25 @@
+--- ./third_party/libc++/src/include/new.orig
++++ ./third_party/libc++/src/include/new
+@@ -349,12 +349,19 @@
+ 
+ #if _LIBCPP_STD_VER >= 17
+ 
+-#  if defined(__GCC_DESTRUCTIVE_SIZE) && defined(__GCC_CONSTRUCTIVE_SIZE)
++// backported from https://github.com/llvm/llvm-project/pull/89446
++#  if !defined(__GCC_DESTRUCTIVE_SIZE) || !defined(__GCC_CONSTRUCTIVE_SIZE)
++#    if defined(__aarch64__)
++#      define __GCC_DESTRUCTIVE_SIZE 256
++#      define __GCC_CONSTRUCTIVE_SIZE 64
++#    else
++#      define __GCC_DESTRUCTIVE_SIZE 64
++#      define __GCC_CONSTRUCTIVE_SIZE 64
++#    endif
++#  endif // !defined(__GCC_DESTRUCTIVE_SIZE) || !defined(__GCC_CONSTRUCTIVE_SIZE)
+ 
+ inline constexpr size_t hardware_destructive_interference_size  = __GCC_DESTRUCTIVE_SIZE;
+ inline constexpr size_t hardware_constructive_interference_size = __GCC_CONSTRUCTIVE_SIZE;
+-
+-#  endif // defined(__GCC_DESTRUCTIVE_SIZE) && defined(__GCC_CONSTRUCTIVE_SIZE)
+ 
+ #endif // _LIBCPP_STD_VER >= 17
+ 
