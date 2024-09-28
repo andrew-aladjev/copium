@@ -1,9 +1,6 @@
 # copium
 
-patches to chromium allowing to build with gcc, libstdc++,
-and some other common distro fixes (like unbundle scripts).
-
-new in M127: you can build with clang **and** libstdc++!
+patches to chromium, probably-commonly-needed distro fixes.
 
 some patches are cherry-picks from chromium main branch,
 some are made by me, lnl (most get upstreamed in the end).
