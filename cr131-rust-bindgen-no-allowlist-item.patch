@@ -1,15 +1,15 @@
-From 1537ab4f6e0ef33ca75f93265064aad6a3f62a01 Mon Sep 17 00:00:00 2001
+From addd7e915ec2fdee8fabac35539f6ad244c3bf14 Mon Sep 17 00:00:00 2001
 From: "lauren n. liberda" <lauren@selfisekai.rocks>
 Date: Thu, 17 Oct 2024 11:11:36 +0200
 Subject: [PATCH] crabbyavif: do not use allowlist-item in bindgen
 
 this was only added in rust-bindgen 0.68 and fails with earlier versions
 ---
- third_party/crabbyavif/BUILD.gn | 64 ---------------------------------
- 1 file changed, 64 deletions(-)
+ third_party/crabbyavif/BUILD.gn | 66 ---------------------------------
+ 1 file changed, 66 deletions(-)
 
 diff --git a/third_party/crabbyavif/BUILD.gn b/third_party/crabbyavif/BUILD.gn
-index 0ded0b4c92b1c..370b572d88068 100644
+index ad41f0c35971b..370b572d88068 100644
 --- a/third_party/crabbyavif/BUILD.gn
 +++ b/third_party/crabbyavif/BUILD.gn
 @@ -12,15 +12,6 @@ rust_bindgen("crabbyavif_dav1d_bindings") {
@@ -28,7 +28,7 @@ index 0ded0b4c92b1c..370b572d88068 100644
    ]
  }
  
-@@ -48,61 +39,6 @@ rust_bindgen("crabbyavif_libyuv_bindings") {
+@@ -48,63 +39,6 @@ rust_bindgen("crabbyavif_libyuv_bindings") {
    bindgen_flags = [
      "no-doc-comments",
      "generate=functions,types,vars,methods,constructors,destructors",
@@ -71,6 +71,8 @@ index 0ded0b4c92b1c..370b572d88068 100644
 -    "allowlist-item=I444AlphaToARGBMatrix",
 -    "allowlist-item=I444ToARGBMatrix",
 -    "allowlist-item=I444ToRGB24Matrix",
+-    "allowlist-item=NV12ToARGBMatrix",
+-    "allowlist-item=NV21ToARGBMatrix",
 -    "allowlist-item=P010ToAR30Matrix",
 -    "allowlist-item=ScalePlane",
 -    "allowlist-item=ScalePlane_12",
