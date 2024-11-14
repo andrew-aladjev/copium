@@ -1,18 +1,18 @@
-From addd7e915ec2fdee8fabac35539f6ad244c3bf14 Mon Sep 17 00:00:00 2001
+From cacf3472ad17d0bdcb2fb44f60abaed8170f1cc3 Mon Sep 17 00:00:00 2001
 From: "lauren n. liberda" <lauren@selfisekai.rocks>
 Date: Thu, 17 Oct 2024 11:11:36 +0200
 Subject: [PATCH] crabbyavif: do not use allowlist-item in bindgen
 
 this was only added in rust-bindgen 0.68 and fails with earlier versions
 ---
- third_party/crabbyavif/BUILD.gn | 66 ---------------------------------
- 1 file changed, 66 deletions(-)
+ third_party/crabbyavif/BUILD.gn | 68 ---------------------------------
+ 1 file changed, 68 deletions(-)
 
 diff --git a/third_party/crabbyavif/BUILD.gn b/third_party/crabbyavif/BUILD.gn
-index ad41f0c35971b..370b572d88068 100644
+index 5b01e6f24462f..be7da051f483c 100644
 --- a/third_party/crabbyavif/BUILD.gn
 +++ b/third_party/crabbyavif/BUILD.gn
-@@ -12,15 +12,6 @@ rust_bindgen("crabbyavif_dav1d_bindings") {
+@@ -13,15 +13,6 @@ rust_bindgen_generator("crabbyavif_dav1d_bindings") {
    bindgen_flags = [
      "no-doc-comments",
      "generate=functions,types,vars,methods,constructors,destructors",
@@ -28,11 +28,12 @@ index ad41f0c35971b..370b572d88068 100644
    ]
  }
  
-@@ -48,63 +39,6 @@ rust_bindgen("crabbyavif_libyuv_bindings") {
+@@ -42,65 +33,6 @@ rust_bindgen_generator("crabbyavif_libyuv_bindings") {
    bindgen_flags = [
      "no-doc-comments",
      "generate=functions,types,vars,methods,constructors,destructors",
 -    "allowlist-item=AR30ToAB30",
+-    "allowlist-item=ARGBToABGR",
 -    "allowlist-item=ARGBAttenuate",
 -    "allowlist-item=ARGBUnattenuate",
 -    "allowlist-item=Convert16To8Plane",
@@ -74,6 +75,7 @@ index ad41f0c35971b..370b572d88068 100644
 -    "allowlist-item=NV12ToARGBMatrix",
 -    "allowlist-item=NV21ToARGBMatrix",
 -    "allowlist-item=P010ToAR30Matrix",
+-    "allowlist-item=P010ToARGBMatrix",
 -    "allowlist-item=ScalePlane",
 -    "allowlist-item=ScalePlane_12",
 -    "allowlist-item=YuvConstants",
