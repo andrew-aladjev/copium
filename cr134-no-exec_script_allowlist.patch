@@ -1,0 +1,62 @@
+From 16d5f8e76e711235dae58982133b11fb72d35340 Mon Sep 17 00:00:00 2001
+From: LN Liberda <lauren@selfisekai.rocks>
+Date: Tue, 11 Mar 2025 02:27:32 +0100
+Subject: [PATCH] Revert "Use `exec_script_allowlist` in the GN dotfile
+ (//.gn)."
+
+This reverts commit 7c6c78ad4e0ed6a0e1204264b02db8f85d34994e.
+---
+ .gn                        | 8 ++++----
+ build/dotfile_settings.gni | 6 +-----
+ 2 files changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/.gn b/.gn
+index 3f65718281973..44a11ec90ec9b 100644
+--- a/.gn
++++ b/.gn
+@@ -90,7 +90,7 @@ no_check_targets = [
+   "//v8:v8_libplatform",  # 2 errors
+ ]
+ 
+-# These are the list of GN files that run exec_script. This allowlist exists
++# These are the list of GN files that run exec_script. This whitelist exists
+ # to force additional review for new uses of exec_script, which is strongly
+ # discouraged.
+ #
+@@ -145,11 +145,11 @@ no_check_targets = [
+ #      this situation much easier to create. if the build always lists the
+ #      files and passes them to a script, it will always be correct.
+ 
+-exec_script_allowlist =
+-    build_dotfile_settings.exec_script_allowlist +
++exec_script_whitelist =
++    build_dotfile_settings.exec_script_whitelist +
+     angle_dotfile_settings.exec_script_whitelist +
+     [
+-      # Allowlist entries for //build should go into
++      # Whitelist entries for //build should go into
+       # //build/dotfile_settings.gni instead, so that they can be shared
+       # with other repos. The entries in this list should be only for files
+       # in the Chromium repo outside of //build.
+diff --git a/build/dotfile_settings.gni b/build/dotfile_settings.gni
+index 29e01306126b6..e004eb5322200 100644
+--- a/build/dotfile_settings.gni
++++ b/build/dotfile_settings.gni
+@@ -6,7 +6,7 @@
+ # to make it easier to roll new versions of //build in.
+ 
+ build_dotfile_settings = {
+-  exec_script_allowlist = [
++  exec_script_whitelist = [
+     "//build/config/android/rules.gni",
+     "//build/config/apple/mobile_config.gni",
+     "//build/config/chromeos/rules.gni",
+@@ -42,8 +42,4 @@ build_dotfile_settings = {
+     "//build/toolchain/zos/BUILD.gn",
+     "//build/util/branding.gni",
+   ]
+-
+-  # TODO(crbug.com/389986807) - move other clients to `exec_script_allowlist`
+-  # so that we don't need to keep supporting `exec_script_whitelist`.
+-  exec_script_whitelist = exec_script_allowlist
+ }
