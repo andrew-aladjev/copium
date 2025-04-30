@@ -1,0 +1,35 @@
+From a0cb620a1e5788d8b2ccd41f3529601b1b76f65d Mon Sep 17 00:00:00 2001
+From: LN Liberda <lauren@selfisekai.rocks>
+Date: Fri, 21 Mar 2025 17:00:42 +0100
+Subject: [PATCH] Allow to disable the Node.js version check with a build arg
+
+---
+ third_party/node/node.gni | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/third_party/node/node.gni b/third_party/node/node.gni
+index 93ac4231a7b78..df3df0e771c68 100644
+--- a/third_party/node/node.gni
++++ b/third_party/node/node.gni
+@@ -5,6 +5,11 @@
+ import("//build/toolchain/rbe.gni")
+ import("//build/toolchain/siso.gni")
+ 
++declare_args() {
++  # Check the version of the Node.js binary.
++  node_version_check = true
++}
++
+ template("node") {
+   action(target_name) {
+     forward_variables_from(invoker, "*", TESTONLY_AND_VISIBILITY)
+@@ -39,7 +44,8 @@ template("node") {
+     # Automatically add a dependency to ":check_version" to ensure NodeJS is
+     # always running the expected version, except when the ':check_version'
+     # target itself is running in which case it shouldn't depend on itself.
+-    if (get_label_info(":" + target_name, "label_no_toolchain") !=
++    if (node_version_check &&
++        get_label_info(":" + target_name, "label_no_toolchain") !=
+         "//third_party/node:check_version") {
+       if (!defined(deps)) {
+         deps = []
